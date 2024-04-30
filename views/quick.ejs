@@ -14,13 +14,51 @@
     <title>Quiz Whiz: Trivia Game</title>
   </head>
   <body>
-    <h1>Quiz Whiz</h1>
-    <p>Question</p>
-    <ul>
-      <li>Answer</li>
-      <li>Answer</li>
-      <li>Answer</li>
-      <li>Answer</li>
-    </ul>
+    <div class="container">
+      <% for (const trivia of content) { %>
+      <div class="trivia">
+        <p id="category"><%= trivia.category %></p>
+        <h2><%= trivia.question %></h2>
+        <% trivia.choices.forEach(element => { %>
+        <button class="choices"><%= element %></button>
+        <% }); %>
+        <p style="display: none" id="<%= trivia.correct_answer %>"></p>
+      </div>
+      <% } %>
+    </div>
   </body>
+  <script
+    src="https://code.jquery.com/jquery-3.7.1.js"
+    integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+    crossorigin="anonymous"
+  ></script>
+  <script src="https://cdn.jsdelivr.net/npm/ejs@3.1.10/ejs.min.js"></script>
+
+  <script>
+    var currentQuestion = 0;
+
+    $(".trivia").hide();
+    $(".trivia").first().show();
+
+    $(".choices").on("click", (event) => {
+      const answer = $(event.target).text();
+      var correct_answer = $(
+        `div.trivia[style]:not([style="display: none;"]) > p[style="display: none"]`
+      ).attr("id");
+
+      console.log(correct_answer);
+
+      if (answer === correct_answer) {
+        console.log("Correct answer!");
+      } else {
+        console.log("Wrong!");
+      }
+
+      if ($(`div[style]:not([style="display: none;"])`).next("div").length) {
+        $(`div[style]:not([style="display: none;"])`).hide().next().fadeIn(200);
+      } else {
+        $(".container").html("<h2>End of quiz!</h2>");
+      }
+    });
+  </script>
 </html>

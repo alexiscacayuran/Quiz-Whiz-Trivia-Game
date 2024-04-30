@@ -1,5 +1,6 @@
 import express from "express";
 import axios from "axios";
+import he from "he";
 
 const app = express();
 const port = 3000;
@@ -33,18 +34,26 @@ app.get("/quick", async (req, res) => {
     const response = await axios.get(API_URL + "api.php", {
       params: {
         amount: 10,
+        difficulty: "easy",
         type: "multiple",
       },
     });
 
     const results = response.data.results;
     for (let i = 0; i < 10; i++) {
-      results[i].answers = [...results[i].incorrect_answers];
-      results[i].answers.push(results[i].correct_answer);
-      shuffle(results[i].answers);
+      results[i].category = he.decode(results[i].category);
+      results[i].question = he.decode(results[i].question);
+      results[i].correct_answer = he.decode(results[i].correct_answer);
+
+      results[i].choices = [...results[i].incorrect_answers];
+      results[i].choices.push(results[i].correct_answer);
+      results[i].choices.forEach((element) => {
+        he.decode(element);
+      });
+      shuffle(results[i].choices);
     }
-    console.log(results);
-    res.render("quick.ejs");
+    //console.log(results);
+    res.render("quick.ejs", { content: results });
   } catch (error) {
     console.log("Error: ", error.message);
   }

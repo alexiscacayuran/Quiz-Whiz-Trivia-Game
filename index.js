@@ -6,6 +6,8 @@ const app = express();
 const port = 3000;
 const API_URL = "https://opentdb.com/";
 
+app.use(express.static("public"));
+
 function shuffle(array) {
   let currentIndex = array.length;
 
@@ -40,19 +42,21 @@ app.get("/quick", async (req, res) => {
     });
 
     const results = response.data.results;
-    for (let i = 0; i < 10; i++) {
+    console.log(results);
+    for (var i = 0; i < 10; i++) {
       results[i].category = he.decode(results[i].category);
       results[i].question = he.decode(results[i].question);
       results[i].correct_answer = he.decode(results[i].correct_answer);
 
       results[i].choices = [...results[i].incorrect_answers];
       results[i].choices.push(results[i].correct_answer);
-      results[i].choices.forEach((element) => {
-        he.decode(element);
+      results[i].choices = results[i].choices.map((element) => {
+        return he.decode(element);
       });
+
       shuffle(results[i].choices);
     }
-    //console.log(results);
+
     res.render("quick.ejs", { content: results });
   } catch (error) {
     console.log("Error: ", error.message);

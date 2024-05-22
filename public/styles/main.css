@@ -10,3 +10,13 @@ h1,
 h2 {
   font-family: "Peace Sans", sans-serif;
 }
+
+.correct {
+  background-color: blue;
+  color: white;
+}
+
+.wrong {
+  background-color: red;
+  color: white;
+}

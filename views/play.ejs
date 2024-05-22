@@ -35,6 +35,26 @@
         <p style="display: none" id="<%= trivia.correct_answer %>"></p>
       </div>
       <% } %>
+
+      <div class="result" style="display: none">
+        <h2 class="result-message">Great!</h2>
+        <p>Your score:</p>
+        <p class="result-score"></p>
+        <div class="result-button">
+          <form method="post">
+            <input type="hidden" name="amount" value="10" />
+            <input type="hidden" name="difficulty" value="easy" />
+            <input type="hidden" name="type" value="multiple" />
+            <button type="submit" id="quickPlay" formaction="\play">
+              TRY AGAIN
+            </button>
+          </form>
+
+          <button id="play" onclick="window.location.href='/'">
+            BACK TO MENU
+          </button>
+        </div>
+      </div>
     </div>
   </body>
   <script
@@ -50,31 +70,54 @@
   <script src="https://cdn.jsdelivr.net/npm/ejs@3.1.10/ejs.min.js"></script>
 
   <script>
-    var currentQuestion = 0;
+    const amount = $(".trivia").length;
+    const delay = 800;
+    var points = 0;
 
     $(".trivia").hide();
     $(".trivia").first().show();
 
-    $(".choices").on("click", (event) => {
-      const answer = $(event.target).closest(".choices").attr("id");
-      var correct_answer = $(
-        `div.trivia[style]:not([style="display: none;"]) > p[style="display: none"]`
-      ).attr("id");
+    const openQuestion = `.trivia[style]:not([style="display: none;"])`;
+    const answerKey = `p[style="display: none"]`;
 
-      console.log(event.target);
-      console.log(answer);
-      console.log(correct_answer);
+    $(".choices").one("click", (event) => {
+      const answer = $(event.target).closest(".choices").attr("id");
+      var correct_answer = $(openQuestion + " > " + answerKey).attr("id");
+
+      // console.log(event.target);
+      // console.log(answer);
+      // console.log(correct_answer);
 
       if (answer === correct_answer) {
-        console.log("Correct answer!");
+        points++;
+        $(event.target).closest(".choices").addClass("correct");
+        setTimeout(() => {
+          $(event.target).closest(".choices").removeClass("correct");
+        }, delay);
       } else {
-        console.log("Wrong!");
+        $(event.target).closest(".choices").addClass("wrong");
+        $(openQuestion + ` > button:contains(` + correct_answer + `)`).addClass(
+          "correct"
+        );
+        setTimeout(() => {
+          $(event.target).closest(".choices").removeClass("wrong");
+          $(
+            openQuestion + ` > button:contains(` + correct_answer + `)`
+          ).removeClass("correct");
+        }, delay);
       }
 
-      if ($(`div[style]:not([style="display: none;"])`).next("div").length) {
-        $(`div[style]:not([style="display: none;"])`).hide().next().fadeIn(200);
+      if ($(openQuestion).next(".trivia").length) {
+        $(openQuestion).delay(delay).hide(0).next().delay(delay).fadeIn(200);
       } else {
-        $(".container").html("<h2>End of quiz!</h2>");
+        const score = (points / amount) * 100;
+
+        $(openQuestion).delay(delay).hide(0);
+
+        setTimeout(() => {
+          $(".result-score").text(`${score}`);
+          $(".result").fadeIn(200);
+        }, delay);
       }
     });
   </script>

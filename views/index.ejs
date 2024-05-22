@@ -16,8 +16,13 @@
   <body>
     <h1>Quiz Whiz</h1>
     <button id="play" onclick="window.location.href='/play'">PLAY</button>
-    <button id="quickPlay" onclick="window.location.href='/quick'">
-      QUICK PLAY
-    </button>
+    <form method="post">
+      <input type="hidden" name="amount" value="10" />
+      <input type="hidden" name="difficulty" value="easy" />
+      <input type="hidden" name="type" value="multiple" />
+      <button type="submit" id="quickPlay" formaction="\play">
+        QUICK PLAY
+      </button>
+    </form>
   </body>
 </html>

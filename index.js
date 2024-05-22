@@ -1,12 +1,15 @@
 import express from "express";
+import bodyParser from "body-parser";
 import axios from "axios";
 import he from "he";
 
 const app = express();
 const port = 3000;
 const API_URL = "https://opentdb.com/";
+//const __amount = 5;
 
 app.use(express.static("public"));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 function shuffle(array) {
   let currentIndex = array.length;
@@ -31,19 +34,27 @@ app.get("/", (req, res) => {
   res.render("index.ejs");
 });
 
-app.get("/quick", async (req, res) => {
+app.get("/create", (req, res) => {
+  res.render("create.ejs");
+});
+
+app.post("/play", async (req, res) => {
+  const amount = req.body.amount;
+  const difficulty = req.body.difficulty;
+  const type = req.body.type;
+
   try {
     const response = await axios.get(API_URL + "api.php", {
       params: {
-        amount: 10,
-        difficulty: "easy",
-        type: "multiple",
+        amount: amount,
+        difficulty: difficulty,
+        type: type,
       },
     });
 
     const results = response.data.results;
-    console.log(results);
-    for (var i = 0; i < 10; i++) {
+    //console.log(results);
+    for (var i = 0; i < amount; i++) {
       results[i].category = he.decode(results[i].category);
       results[i].question = he.decode(results[i].question);
       results[i].correct_answer = he.decode(results[i].correct_answer);
@@ -57,7 +68,7 @@ app.get("/quick", async (req, res) => {
       shuffle(results[i].choices);
     }
 
-    res.render("quick.ejs", { content: results });
+    res.render("play.ejs", { content: results });
   } catch (error) {
     console.log("Error: ", error.message);
   }

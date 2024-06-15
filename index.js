@@ -39,9 +39,16 @@ app.get("/create", (req, res) => {
 });
 
 app.post("/play", async (req, res) => {
-  const amount = req.body.amount;
+  console.log(req.body);
+
+  const amount = "10";
+  const type = "multiple";
   const difficulty = req.body.difficulty;
-  const type = req.body.type;
+  var category = "";
+
+  if (req.body.category) {
+    category = req.body.category;
+  }
 
   try {
     const response = await axios.get(API_URL + "api.php", {
@@ -49,6 +56,7 @@ app.post("/play", async (req, res) => {
         amount: amount,
         difficulty: difficulty,
         type: type,
+        category: category,
       },
     });
 

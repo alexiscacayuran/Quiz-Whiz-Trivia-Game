@@ -6,9 +6,73 @@
   font-variation-settings: "wdth" 100;
 }
 
+.bg-container {
+  width: 100%;
+  height: 100%;
+  background: #ffb200;
+  position: relative;
+  overflow: hidden;
+}
+
+.bg-container::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+
+  background: radial-gradient(circle, #277bc0 10%, transparent 20%),
+    radial-gradient(circle, transparent 10%, #ffb200 20%);
+  background-size: 30px 30px; /* Adjust the size of the pattern */
+  animation: moveBackground 8s linear infinite; /* Adjust the animation duration and timing function */
+}
+
+@keyframes moveBackground {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(20%, 20%);
+  }
+}
+
 h1,
 h2 {
+  font-size: 2em;
   font-family: "Peace Sans", sans-serif;
+  paint-order: stroke fill;
+  color: #fff4cf;
+}
+
+#menu h1 {
+  font-size: 8em;
+  -webkit-text-stroke: 35px #277bc0;
+}
+
+.btn-primary {
+  background-color: #0d6efd;
+}
+
+#menu button,
+#start-button {
+  --button_radius: 0.75em;
+  --button_color: #fff4cf;
+  --button_outline_color: #0d6efd;
+  padding: 0;
+  font-size: 2em;
+  font-weight: 700;
+  border: none;
+  border-radius: var(--button_radius);
+  background: var(--button_outline_color);
+}
+
+#config h2 {
+  -webkit-text-stroke: 10px #277bc0;
+}
+
+#start-button {
+  font-size: 1.5em;
 }
 
 .correct {
@@ -19,4 +83,48 @@ h2 {
 .wrong {
   background-color: red;
   color: white;
+}
+
+#category button {
+  width: 130px;
+  height: 130px;
+}
+
+#category label {
+  text-shadow: 2px 2px 8px rgba(93, 88, 75, 1);
+  color: #fff4cf;
+  width: 120px;
+  height: 120px;
+  border: none;
+  line-height: 90%;
+}
+
+#difficulty label {
+  font-size: 1.2em;
+  font-weight: 700;
+  width: 300px;
+  line-height: 90%;
+}
+
+.button-top {
+  display: block;
+  box-sizing: border-box;
+  border: 2px solid var(--button_outline_color);
+  border-radius: var(--button_radius);
+  font-weight: 600;
+  padding: 0.75em 1.5em;
+  background: var(--button_color);
+  color: var(--button_outline_color);
+  transform: translateY(-0.2em);
+  transition: transform 0.1s ease;
+}
+
+button:hover .button-top {
+  /* Pull the button upwards when hovered */
+  transform: translateY(-0.33em);
+}
+
+button:active .button-top {
+  /* Push the button downwards when pressed */
+  transform: translateY(0);
 }

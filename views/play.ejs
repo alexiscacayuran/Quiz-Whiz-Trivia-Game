@@ -21,38 +21,102 @@
   </head>
   <body>
     <% const letterArray = ["A", "B", "C", "D"] %>
-    <div class="container">
-      <% for (const trivia of content) { %>
-      <div class="trivia">
-        <p id="category"><%= trivia.category %></p>
-        <h2><%= trivia.question %></h2>
-        <% trivia.choices.forEach((element, index) => { %>
-        <button class="choices" id="<%= element %>">
-          <span class="letters"><%= letterArray[index] %> </span>
-          <p class="answer" style="display: inline"><%= element %></p>
-        </button>
-        <% }); %>
-        <p style="display: none" id="<%= trivia.correct_answer %>"></p>
-      </div>
-      <% } %>
+    <div class="bg-container vh-100">
+      <div class="position-relative">
+        <div class="container">
+          <% for (const trivia of content) { %>
+          <div class="trivia">
+            <div class="d-flex flex-column mt-2">
+              <p id="question-number" class="text-center p-0">
+                <%= content.indexOf(trivia) + 1 %> out of 10
+              </p>
+              <p id="category-picked" class="text-center p-0">
+                <%= trivia.category %>
+              </p>
+            </div>
 
-      <div class="result" style="display: none">
-        <h2 class="result-message">Great!</h2>
-        <p>Your score:</p>
-        <p class="result-score"></p>
-        <div class="result-button">
-          <form method="post">
-            <input type="hidden" name="amount" value="10" />
-            <input type="hidden" name="difficulty" value="easy" />
-            <input type="hidden" name="type" value="multiple" />
-            <button type="submit" id="quickPlay" formaction="\play">
-              TRY AGAIN
-            </button>
-          </form>
+            <div id="question" class="col-12 mt-2 w-100">
+              <h2
+                class="d-flex align-items-center justify-content-center text-center p-4"
+              >
+                <%= trivia.question %>
+              </h2>
+            </div>
 
-          <button id="play" onclick="window.location.href='/'">
-            BACK TO MENU
-          </button>
+            <div class="choices-container">
+              <div class="row">
+                <% trivia.choices.forEach((element, index) => { %> <% if(index
+                === 0 || index === 2 ){ %>
+                <div class="col-6">
+                  <button class="choices w-100 p-0 mt-4" id="<%= element %>">
+                    <div
+                      class="choices-button-top d-flex align-items-center w-100"
+                    >
+                      <div
+                        class="circle d-flex align-items-center justify-content-center"
+                      >
+                        <span class="letters"><%= letterArray[index] %></span>
+                      </div>
+                      <p class="answer flex-fill m-0" style="display: inline">
+                        <%= element %>
+                      </p>
+                    </div>
+                  </button>
+                </div>
+
+                <% } %> <% }); %>
+              </div>
+
+              <div class="row">
+                <% trivia.choices.forEach((element, index) => { %> <% if(index
+                === 1 || index === 3 ){ %>
+                <div class="col-6">
+                  <button class="choices w-100 p-0 mt-4" id="<%= element %>">
+                    <div
+                      class="choices-button-top d-flex align-items-center w-100"
+                    >
+                      <div
+                        class="circle col-2 d-flex align-items-center justify-content-center"
+                      >
+                        <span class="letters"><%= letterArray[index] %></span>
+                      </div>
+                      <p
+                        class="answer col flex-fill m-0"
+                        style="display: inline"
+                      >
+                        <%= element %>
+                      </p>
+                    </div>
+                  </button>
+                </div>
+
+                <% } %> <% }); %>
+              </div>
+            </div>
+
+            <p style="display: none" id="<%= trivia.correct_answer %>"></p>
+          </div>
+          <% } %>
+
+          <div class="result" style="display: none">
+            <h2 class="result-message">Great!</h2>
+            <p>Your score:</p>
+            <p class="result-score"></p>
+            <div class="result-button">
+              <form method="post">
+                <input type="hidden" name="amount" value="10" />
+                <input type="hidden" name="difficulty" value="easy" />
+                <input type="hidden" name="type" value="multiple" />
+                <button type="submit" id="quickPlay" formaction="\play">
+                  TRY AGAIN
+                </button>
+              </form>
+
+              <button id="play" onclick="window.location.href='/'">
+                BACK TO MENU
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -71,7 +135,7 @@
 
   <script>
     const amount = $(".trivia").length;
-    const delay = 800;
+    const delay = 1000;
     var points = 0;
 
     $(".trivia").hide();
@@ -80,30 +144,72 @@
     const openQuestion = `.trivia[style]:not([style="display: none;"])`;
     const answerKey = `p[style="display: none"]`;
 
+    $(".choices-container > :first-child > div:first-child .circle").addClass(
+      "yellow"
+    );
+
+    $(".choices-container > :first-child > div:last-child .circle").addClass(
+      "green"
+    );
+
+    $(".choices-container > :last-child > div:first-child .circle").addClass(
+      "purple"
+    );
+
+    $(".choices-container > :last-child > div:last-child .circle").addClass(
+      "orange"
+    );
+
     $(".choices").one("click", (event) => {
       const answer = $(event.target).closest(".choices").attr("id");
       var correct_answer = $(openQuestion + " > " + answerKey).attr("id");
 
-      // console.log(event.target);
-      // console.log(answer);
-      // console.log(correct_answer);
+      console.log("Event:", event.target);
+      console.log("Answer:", answer);
+      console.log("Correct:", correct_answer);
 
       if (answer === correct_answer) {
         points++;
-        $(event.target).closest(".choices").addClass("correct");
+        $(event.target)
+          .closest(".choices-button-top")
+          .addClass("correct-button-top")
+          .closest(".choices")
+          .addClass("correct-button");
         setTimeout(() => {
-          $(event.target).closest(".choices").removeClass("correct");
+          $(event.target)
+            .closest(".choices-button-top")
+            .removeClass("correct-button-top");
         }, delay);
       } else {
-        $(event.target).closest(".choices").addClass("wrong");
-        $(openQuestion + ` > button:contains(` + correct_answer + `)`).addClass(
-          "correct"
+        $(event.target)
+          .closest(".choices-button-top")
+          .addClass("wrong-button-top")
+          .closest(".choices")
+          .addClass("wrong-button");
+
+        $(
+          openQuestion + ` .choices-button-top:contains(` + correct_answer + `)`
+        ).addClass("correct-button-top");
+        $(openQuestion + ` .choices:contains(` + correct_answer + `)`).addClass(
+          "correct-button"
         );
+
         setTimeout(() => {
-          $(event.target).closest(".choices").removeClass("wrong");
+          $(event.target)
+            .closest(".choices-button-top")
+            .removeClass("wrong-button-top")
+            .closest(".choices")
+            .addClass("wrong-button");
           $(
-            openQuestion + ` > button:contains(` + correct_answer + `)`
-          ).removeClass("correct");
+            openQuestion +
+              ` .choices-button-top:contains(` +
+              correct_answer +
+              `)`
+          ).removeClass("correct-button-top");
+
+          $(
+            openQuestion + ` .choices:contains(` + correct_answer + `)`
+          ).removeClass("correct-button");
         }, delay);
       }
 

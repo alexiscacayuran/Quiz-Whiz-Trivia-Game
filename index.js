@@ -39,7 +39,7 @@ app.get("/create", (req, res) => {
 });
 
 app.post("/play", async (req, res) => {
-  console.log(req.body);
+  //console.log(req.body);
 
   const amount = "10";
   const type = "multiple";

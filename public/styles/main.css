@@ -32,7 +32,6 @@
 * {
   font-family: "Fredoka", sans-serif;
   font-optical-sizing: auto;
-  font-weight: 100;
   font-style: normal;
   font-variation-settings: "wdth" 100;
 }
@@ -40,7 +39,9 @@
 h1,
 h2 {
   font-size: 2em;
-  font-family: "Peace Sans", sans-serif;
+  font-family: "Lilita One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
   paint-order: stroke fill;
   color: #fff4cf;
 }
@@ -61,8 +62,8 @@ h2 {
 #category .btn {
   text-shadow: 1px 1px 4px rgba(93, 88, 75, 1);
   color: #fff4cf;
-  width: 120px;
-  height: 120px;
+  min-width: 100px;
+  height: 100px;
   border: none;
   line-height: 90%;
 }
@@ -82,6 +83,7 @@ h2 {
   font-size: 1.2em;
   font-weight: 700;
   width: 250px;
+  height: 50px;
   line-height: 90%;
 }
 
@@ -91,13 +93,21 @@ h2 {
   border: 2px solid #277bc0;
 }
 
+#difficulty .btn-check:active + .btn {
+  background-color: #1d5d91;
+  color: #fff4cf;
+}
+
 #difficulty .btn:hover,
 #category .btn:hover {
   transform: translateY(-0.11em);
   transition: transform 0.1s ease;
 }
 #menu button,
-#start-button {
+#start-button,
+#volume-button,
+#result-menu button,
+.choices {
   --button_radius: 0.75em;
   --button_color: #fff4cf;
   --button_outline_color: #277bc0;
@@ -109,18 +119,21 @@ h2 {
   background: var(--button_outline_color);
 }
 
-.choices {
-  --button_radius: 1.25em;
-  --button_color: #fff4cf;
-  --button_outline_color: #277bc0;
-  --button-height: 100px;
-  font-weight: 700;
-  border: none;
-  border-radius: var(--button_radius);
-  background: var(--button_outline_color);
+#volume-button {
+  font-size: 1.2em;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
 }
 
-.button-top {
+.choices {
+  --button_radius: 0.8em;
+  --button-height: 100px;
+}
+
+.button-top,
+.choices-button-top,
+.volume-button-top {
   display: block;
   box-sizing: border-box;
   border: 4px solid var(--button_outline_color);
@@ -133,26 +146,30 @@ h2 {
   transition: transform 0.1s ease;
 }
 
+.volume-button-top {
+  width: 45px;
+  height: 45px;
+  border: 2px solid var(--button_outline_color);
+  border-radius: 50%;
+  padding: 0;
+}
+
 .choices-button-top {
-  box-sizing: border-box;
-  border: 4px solid var(--button_outline_color);
-  border-radius: var(--button_radius);
   height: var(--button-height);
   font-weight: 600;
-  background: var(--button_color);
-  color: var(--button_outline_color);
-  transform: translateY(-0.2em);
-  transition: transform 0.1s ease;
+  padding: 0;
 }
 
 button:hover .button-top,
-.choices:hover .choices-button-top {
+.choices:hover .choices-button-top,
+#volume-button:hover .volume-button-top {
   /* Pull the button upwards when hovered */
   transform: translateY(-0.33em);
 }
 
 button:active .button-top,
-.choices:active .choices-button-top {
+.choices:active .choices-button-top,
+#volume-button:active .volume-button-top {
   /* Push the button downwards when pressed */
   transform: translateY(0);
 }
@@ -163,15 +180,15 @@ button:active .button-top,
   border: 15px solid #fff0bc;
   height: 300px;
   border-radius: 0.75em;
-  font-size: 2.5em;
+  font-size: 2.6em;
 }
 
 .circle {
   height: 80px;
   width: 80px;
-  margin-left: 0.15em;
-  border-radius: 0.2em;
-  font-size: 3.5em;
+  margin-left: 0.1em;
+  border-radius: 0.3em;
+  font-size: 2em;
   color: #fff4cf;
 }
 
@@ -197,8 +214,7 @@ button:active .button-top,
 }
 
 .answer {
-  font-weight: 700;
-  font-size: 1.8em;
+  font-weight: 600;
   padding: 0 0.2em;
 }
 
@@ -236,4 +252,69 @@ button:active .button-top,
 
 .wrong-button {
   background: #a93737;
+}
+
+.result-message {
+  font-size: 2.4em;
+  -webkit-text-stroke: 10px #277bc0;
+  margin-bottom: 50px;
+}
+
+.result-score-container {
+  font-weight: 700;
+  color: #fff4cf;
+  text-shadow: 1px 1px 4px rgba(93, 88, 75, 1);
+}
+
+.result-score-container p:first-child {
+  font-size: 2em;
+}
+
+.result-score {
+  font-size: 8em;
+  line-height: 50%;
+  margin-bottom: 100px;
+}
+
+.modal-header {
+  border-bottom: none;
+}
+
+.modal-content {
+  background-color: #fff4cf;
+  border-radius: 1.2em;
+  border: 4px solid #277bc0;
+}
+
+.modal-content h2 {
+  color: #277bc0;
+  font-size: 3em;
+}
+.modal-content .btn {
+  background-color: #277bc0;
+  color: #fff4cf;
+}
+
+.modal-content .btn:active {
+  background-color: #1d5d91;
+  color: #fff4cf;
+}
+
+.modal-content p {
+  color: #277bc0;
+}
+
+.modal-body {
+  height: 250px;
+  padding: 2.5em 2em;
+}
+
+.footer-container {
+  background-color: #277bc0;
+  height: 30px;
+  margin-top: 3.8em;
+}
+
+.footer-content {
+  color: #fff4cf;
 }

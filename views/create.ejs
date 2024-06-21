@@ -16,19 +16,43 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap"
+      rel="stylesheet"
+    />
+    <link
       href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap"
       rel="stylesheet"
     />
     <link href="https://fonts.cdnfonts.com/css/peace-sans" rel="stylesheet" />
     <link rel="stylesheet" href="styles/main.css" />
+    <script
+      src="https://kit.fontawesome.com/176c4ea3a9.js"
+      crossorigin="anonymous"
+    ></script>
     <title>Quiz Whiz: Trivia Game</title>
   </head>
   <body>
+    <% if(locals.code){ %>
+    <div id="api-code" data-code="<%= code %>"></div>
+    <% } %>
+    <audio id="bg-audio" src="assets/lofi-05-bg.mp3" loop="loop"></audio>
     <div class="bg-container vh-100">
       <div class="position-relative">
         <div class="container">
+          <div class="d-flex justify-content-end mt-3">
+            <button
+              id="volume-button"
+              href="javascript:void(0);"
+              onclick="toggleMute()"
+            >
+              <span
+                class="volume-button-top d-flex align-items-center justify-content-center"
+                ><i class="fa-solid fa-volume-high"></i
+              ></span>
+            </button>
+          </div>
           <form action="/play" method="post" id="config">
-            <div class="col-12 mt-4">
+            <div class="col-12">
               <h2 class="text-center">CATEGORY</h2>
             </div>
             <div
@@ -39,14 +63,14 @@
                 type="radio"
                 class="btn-check"
                 name="category"
-                id="option"
+                id="option0"
                 checked
                 value=""
                 autocomplete="off"
               />
               <label
                 class="btn btn-outline-primary d-flex flex-column justify-content-between align-items-center p-4"
-                for="option1"
+                for="option0"
                 ><i class="fa-solid fa-question fa-2x"></i> Random</label
               >
 
@@ -118,7 +142,8 @@
               <label
                 class="btn btn-outline-primary d-flex flex-column justify-content-between align-items-center p-4"
                 for="option5"
-                ><i class="fa-solid fa-masks-theater fa-2x"></i> Theatre</label
+                ><i class="fa-solid fa-masks-theater fa-2x"></i> Musicals &
+                Theatre</label
               >
 
               <input
@@ -395,7 +420,7 @@
             </div>
             <div
               id="difficulty"
-              class="col-12 d-flex flex-wrap justify-content-center"
+              class="col-12 d-flex flex-wrap justify-content-center align-items-center"
             >
               <input
                 type="radio"
@@ -407,7 +432,7 @@
                 autocomplete="off"
               />
               <label
-                class="btn btn-primary d-flex flex-column justify-content-between align-items-center m-2 p-2"
+                class="btn btn-primary d-flex align-items-center justify-content-center m-2 p-2"
                 for="random"
                 >Random</label
               >
@@ -421,7 +446,7 @@
                 autocomplete="off"
               />
               <label
-                class="btn btn-primary d-flex flex-column justify-content-between align-items-center m-2 p-2"
+                class="btn btn-primary d-flex align-items-center justify-content-center m-2 p-2"
                 for="easy"
                 >Easy</label
               >
@@ -435,7 +460,7 @@
                 autocomplete="off"
               />
               <label
-                class="btn btn-primary d-flex flex-column justify-content-between align-items-center m-2 p-2"
+                class="btn btn-primary d-flex align-items-center justify-content-center m-2 p-2"
                 for="medium"
                 >Medium</label
               >
@@ -449,7 +474,7 @@
                 autocomplete="off"
               />
               <label
-                class="btn btn-primary d-flex flex-column justify-content-between align-items-center m-2 p-2"
+                class="btn btn-primary d-flex justify-content-center align-items-center m-2 p-2"
                 for="hard"
                 >Hard</label
               >
@@ -463,11 +488,63 @@
         </div>
       </div>
     </div>
+
+    <div
+      class="modal fade"
+      id="no-results-modal"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="staticBackdropLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content position-relative">
+          <div class="modal-body">
+            <h2>Oops...</h2>
+            <p>
+              Sorry we don't have enough questions. Try picking another
+              difficulty option.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-primary position-absolute bottom-0 end-0 m-4"
+            data-bs-dismiss="modal"
+          >
+            Okay
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="modal fade"
+      id="rate-limit-modal"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="staticBackdropLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content position-relative">
+          <div class="modal-body">
+            <h2>Oops...</h2>
+            <p>Too many requests. Please try again after 5 seconds.</p>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-primary position-absolute bottom-0 end-0 m-4"
+            data-bs-dismiss="modal"
+          >
+            Okay
+          </button>
+        </div>
+      </div>
+    </div>
   </body>
-  <script
-    src="https://kit.fontawesome.com/176c4ea3a9.js"
-    crossorigin="anonymous"
-  ></script>
+
   <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
@@ -480,5 +557,49 @@
   ></script>
   <script src="https://cdn.jsdelivr.net/npm/ejs@3.1.10/ejs.min.js"></script>
 
-  <script></script>
+  <script>
+    $(document).ready(function () {
+      $("#bg-audio").get(0).play();
+
+      const apiCode = $("#api-code").data("code");
+      console.log(apiCode);
+
+      if (apiCode === 1) {
+        $("#no-results-modal").modal("show");
+      }
+
+      if (apiCode === 5) {
+        $("#rate-limit-modal").modal("show");
+      }
+
+      $(".volume-button-top > i")
+        .closest("#volume-button")
+        .on("click", () => {
+          $(".volume-button-top > i").toggleClass("fa-volume-xmark");
+        });
+
+      $("#category .btn, #difficulty .btn").on("mouseenter", () => {
+        playSound("arcade-game-jump-coin.wav");
+      });
+
+      $("#start-button").on("mouseenter", () => {
+        playSound("quick-lock-sound.wav");
+      });
+
+      $("#start-button, #volume-button").on("click", () => {
+        playSound("switch-tap.wav");
+      });
+    });
+
+    function playSound(name) {
+      var audio = new Audio("assets/" + name);
+      audio.volume = 0.5;
+      audio.play();
+    }
+
+    function toggleMute() {
+      var audio = document.getElementById("bg-audio");
+      audio.muted = !audio.muted;
+    }
+  </script>
 </html>

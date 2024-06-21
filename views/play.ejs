@@ -15,22 +15,45 @@
       href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap"
       rel="stylesheet"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap"
+      rel="stylesheet"
+    />
     <link href="https://fonts.cdnfonts.com/css/peace-sans" rel="stylesheet" />
     <link rel="stylesheet" href="styles/main.css" />
+    <script
+      src="https://kit.fontawesome.com/176c4ea3a9.js"
+      crossorigin="anonymous"
+    ></script>
     <title>Quiz Whiz: Trivia Game</title>
   </head>
   <body>
+    <audio id="bg-audio" src="assets/percussions-01-bg.mp3" loop="loop"></audio>
     <% const letterArray = ["A", "B", "C", "D"] %>
     <div class="bg-container vh-100">
       <div class="position-relative">
         <div class="container">
+          <div class="position-relative d-flex justify-content-end mt-3">
+            <div class="position-absolute">
+              <button
+                id="volume-button"
+                href="javascript:void(0);"
+                onclick="toggleMute()"
+              >
+                <span
+                  class="volume-button-top d-flex align-items-center justify-content-center"
+                  ><i class="fa-solid fa-volume-high"></i
+                ></span>
+              </button>
+            </div>
+          </div>
           <% for (const trivia of content) { %>
           <div class="trivia">
-            <div class="d-flex flex-column mt-2">
+            <div class="d-flex flex-column mb-4">
               <p id="question-number" class="text-center p-0">
-                <%= content.indexOf(trivia) + 1 %> out of 10
+                <%= content.indexOf(trivia) + 1 %> out of <%= content.length %>
               </p>
-              <p id="category-picked" class="text-center p-0">
+              <p id="category-picked" class="text-center p-0 m-0">
                 <%= trivia.category %>
               </p>
             </div>
@@ -99,28 +122,43 @@
           <% } %>
 
           <div class="result" style="display: none">
-            <h2 class="result-message">Great!</h2>
-            <p>Your score:</p>
-            <p class="result-score"></p>
-            <div class="result-button">
-              <form method="post">
-                <input type="hidden" name="amount" value="10" />
-                <input type="hidden" name="difficulty" value="easy" />
-                <input type="hidden" name="type" value="multiple" />
-                <button type="submit" id="quickPlay" formaction="\play">
-                  TRY AGAIN
-                </button>
-              </form>
-
-              <button id="play" onclick="window.location.href='/'">
-                BACK TO MENU
-              </button>
+            <div
+              class="container d-flex flex-column align-items-center justify-content-center vh-100"
+            >
+              <h2 class="result-message text-center px-4"></h2>
+              <div class="result-score-container">
+                <p class="text-center">Your score:</p>
+                <p class="result-score text-center"></p>
+              </div>
+              <div id="result-menu">
+                <div class="d-grid gap-3">
+                  <form method="post" id="quickstart">
+                    <input
+                      type="hidden"
+                      name="difficulty"
+                      value="<%= difficulty%>"
+                    />
+                    <input
+                      type="hidden"
+                      name="category"
+                      value="<%= category%>"
+                    />
+                  </form>
+                  <button id="play" onclick="window.location.href='/'">
+                    <span class="button-top"> BACK TO MENU </span>
+                  </button>
+                  <button form="quickstart" type="submit" formaction="\play">
+                    <span class="button-top">TRY AGAIN</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </body>
+
   <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
@@ -137,6 +175,111 @@
     const amount = $(".trivia").length;
     const delay = 1000;
     var points = 0;
+
+    const score_message = [
+      {
+        min: 0,
+        max: 9,
+        message: [
+          "Did you even try? A goldfish could do better!",
+          "Did you lose your glasses? The game is this way!",
+        ],
+      },
+      {
+        min: 10,
+        max: 19,
+        message: [
+          "At least you found the start button. Baby steps!",
+          "A score so low, even a sloth would be faster!",
+        ],
+      },
+      {
+        min: 20,
+        max: 29,
+        message: [
+          "Not quite rock bottom, but you can see it from here!",
+          "Wow, barely better than a random button mash!",
+        ],
+      },
+      {
+        min: 30,
+        max: 39,
+        message: [
+          "Wow, almost mediocre! Keep pushing!",
+          "Is your mouse broken, or just your spirit?",
+        ],
+      },
+      {
+        min: 40,
+        max: 49,
+        message: [
+          "Looks like someone needs a tutorial... or two.",
+          "Hey, at least you're consistent... at being average.",
+        ],
+      },
+      {
+        min: 50,
+        max: 59,
+        message: [
+          "Halfway to halfway decent. Impressive?",
+          "Halfway to halfway decent. Aim higher, my friend!",
+        ],
+      },
+      {
+        min: 60,
+        max: 69,
+        message: [
+          "Nice effort! Did you fall asleep halfway?",
+          "Starting to get the hang of it, huh? Just starting.",
+        ],
+      },
+      {
+        min: 70,
+        max: 79,
+        message: [
+          "Wow, almost respectable! Who knew you had it in you?",
+          "Nice! Almost like you know what you’re doing.",
+        ],
+      },
+      {
+        min: 80,
+        max: 89,
+        message: [
+          "You're actually pretty good at this. Don't let it get to your head.",
+          "Now you’re cooking with gas! Don’t let it fizzle out.",
+        ],
+      },
+      {
+        min: 90,
+        max: 99,
+        message: [
+          "Look at you, almost a pro! Just a few more points to greatness!",
+          "Nearly there! You’re making the high scores sweat.",
+        ],
+      },
+      {
+        min: 100,
+        max: 100,
+        message: [
+          "Congratulations! You’ve hit the big 100! Now go outside and tell everyone!",
+          "100 points! You’ve officially entered the big leagues!",
+        ],
+      },
+    ];
+
+    $(document).ready(function () {
+      $("#bg-audio").get(0).play();
+    });
+
+    $(".volume-button-top > i")
+      .closest("#volume-button")
+      .on("click", () => {
+        $(".volume-button-top > i").toggleClass("fa-volume-xmark");
+      });
+
+    $(".choices, #result-menu button").on("mouseenter", () => {
+      playSound("quick-lock-sound.wav", 0.2);
+    });
 
     $(".trivia").hide();
     $(".trivia").first().show();
@@ -164,12 +307,14 @@
       const answer = $(event.target).closest(".choices").attr("id");
       var correct_answer = $(openQuestion + " > " + answerKey).attr("id");
 
-      console.log("Event:", event.target);
-      console.log("Answer:", answer);
-      console.log("Correct:", correct_answer);
+      // console.log("Event:", event.target);
+      // console.log("Answer:", answer);
+      // console.log("Correct:", correct_answer);
 
       if (answer === correct_answer) {
         points++;
+
+        playSound("tone-correct.wav", 0.5);
         $(event.target)
           .closest(".choices-button-top")
           .addClass("correct-button-top")
@@ -181,6 +326,8 @@
             .removeClass("correct-button-top");
         }, delay);
       } else {
+        playSound("buzz-wrong.wav", 0.5);
+
         $(event.target)
           .closest(".choices-button-top")
           .addClass("wrong-button-top")
@@ -216,15 +363,43 @@
       if ($(openQuestion).next(".trivia").length) {
         $(openQuestion).delay(delay).hide(0).next().delay(delay).fadeIn(200);
       } else {
-        const score = (points / amount) * 100;
+        const totalScore = (points / amount) * 100;
+        const messageObj = score_message.find(
+          (score) => totalScore >= score.min && totalScore <= score.max
+        );
+
+        const randomIndex = Math.floor(
+          Math.random() * messageObj.message.length
+        );
+
+        console.log(randomIndex);
+        const message = messageObj.message[randomIndex];
 
         $(openQuestion).delay(delay).hide(0);
 
         setTimeout(() => {
-          $(".result-score").text(`${score}`);
+          $(".result-message").text(`${message}`);
+          $(".result-score").text(`${totalScore}`);
           $(".result").fadeIn(200);
+
+          if (totalScore >= 70) {
+            playSound("clapping-game-over.wav", 1);
+          } else {
+            playSound("game-over.wav", 1);
+          }
         }, delay);
       }
     });
+
+    function toggleMute() {
+      var audio = document.getElementById("bg-audio");
+      audio.muted = !audio.muted;
+    }
+
+    function playSound(name, volume) {
+      var audio = new Audio("assets/" + name);
+      audio.volume = volume;
+      audio.play();
+    }
   </script>
 </html>

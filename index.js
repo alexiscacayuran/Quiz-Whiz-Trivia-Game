@@ -35,7 +35,11 @@ app.get("/", (req, res) => {
 });
 
 app.get("/create", (req, res) => {
-  res.render("create.ejs");
+  const __code = req.query.code;
+  console.log(__code);
+  if (__code) {
+    res.render("create.ejs", { code: __code });
+  } else res.render("create.ejs");
 });
 
 app.post("/play", async (req, res) => {
@@ -61,23 +65,43 @@ app.post("/play", async (req, res) => {
     });
 
     const results = response.data.results;
-    //console.log(results);
-    for (var i = 0; i < amount; i++) {
-      results[i].category = he.decode(results[i].category);
-      results[i].question = he.decode(results[i].question);
-      results[i].correct_answer = he.decode(results[i].correct_answer);
+    const code = response.data.response_code;
 
-      results[i].choices = [...results[i].incorrect_answers];
-      results[i].choices.push(results[i].correct_answer);
-      results[i].choices = results[i].choices.map((element) => {
-        return he.decode(element);
+    console.log(code);
+
+    if (code === 0) {
+      for (var i = 0; i < amount; i++) {
+        results[i].category = he.decode(results[i].category);
+        results[i].question = he.decode(results[i].question);
+        results[i].correct_answer = he.decode(results[i].correct_answer);
+
+        results[i].choices = [...results[i].incorrect_answers];
+        results[i].choices.push(results[i].correct_answer);
+        results[i].choices = results[i].choices.map((element) => {
+          return he.decode(element);
+        });
+
+        shuffle(results[i].choices);
+      }
+
+      res.render("play.ejs", {
+        content: results,
+        difficulty: difficulty,
+        category: category,
       });
-
-      shuffle(results[i].choices);
+    } else {
+      //redirect to create route with context, add api response code
+      res.redirect(`/create?code=` + code);
     }
-
-    res.render("play.ejs", { content: results });
   } catch (error) {
+    if (error.response && error.response.status === 429) {
+      // Redirect the user to a specific route if they encounter a 429 error
+      return res.redirect(`/create?code=5`); // Replace '/error429' with the route you want to redirect to
+    } else {
+      // Handle other errors
+      console.error("An error occurred:", error);
+      return res.status(500).send("An error occurred. Please try again later.");
+    }
     console.log("Error: ", error.message);
   }
 }),

@@ -96,7 +96,7 @@ app.post("/play", async (req, res) => {
   } catch (error) {
     if (error.response && error.response.status === 429) {
       // Redirect the user to a specific route if they encounter a 429 error
-      return res.redirect(`/create?code=5`); // Replace '/error429' with the route you want to redirect to
+      return res.redirect(`/create?code=5`); // 
     } else {
       // Handle other errors
       console.error("An error occurred:", error);

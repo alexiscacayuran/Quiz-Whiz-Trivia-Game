@@ -2,11 +2,13 @@ import express from "express";
 import bodyParser from "body-parser";
 import axios from "axios";
 import he from "he";
+import env from "dotenv";
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 const API_URL = "https://opentdb.com/";
 //const __amount = 5;
+env.config();
 
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -96,7 +98,7 @@ app.post("/play", async (req, res) => {
   } catch (error) {
     if (error.response && error.response.status === 429) {
       // Redirect the user to a specific route if they encounter a 429 error
-      return res.redirect(`/create?code=5`); // 
+      return res.redirect(`/create?code=5`); //
     } else {
       // Handle other errors
       console.error("An error occurred:", error);
